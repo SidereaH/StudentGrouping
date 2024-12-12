@@ -33,4 +33,10 @@ Your app is ready to be deployed!
 
 You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
 
-## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
+## Usage
+
+ [http://localhost:3000](localhost:3000) - main page
+ [http://localhost:3000/form](localhost:3000/form) - student form page
+ [http://localhost:3000/login](localhost:3000/login) - login  page
+
+

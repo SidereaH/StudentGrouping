@@ -1,26 +1,35 @@
 import { createSignal } from "solid-js";
+// createSignal - это хук SolidJS для создания реактивного состояния
+// он возвращает массив [getter, setter], похоже на useState в React
+
 import { validateEmail, validatePassword } from "../utils/validation";
 import styles from "./LoginPage.module.css";
 
 const LoginPage = () => {
+      // Создаем реактивное состояние для данных формы
+  // credentials() - для получения значения
+  // setCredentials - для обновления значения
   const [credentials, setCredentials] = createSignal({
     email: "",
     password: "",
   });
+    // Состояние для хранения ошибок валидации
 
   const [errors, setErrors] = createSignal({
     email: null,
     password: null,
   });
-
+ // Состояние для отслеживания "тронутых" полей
+  // Нужно, чтобы показывать ошибки только после взаимодействия с полем
   const [touched, setTouched] = createSignal({
     email: false,
     password: false,
   });
-
+// Функция валидации отдельного поля
   const validateField = (field, value) => {
     let error = null;
-    
+     // Используем разные валидаторы в зависимости от поля
+
     switch (field) {
       case 'email':
         error = validateEmail(value);
@@ -29,6 +38,9 @@ const LoginPage = () => {
         error = validatePassword(value);
         break;
     }
+
+    // Обновляем состояние ошибок
+    // В SolidJS для обновления объекта нужно создать новый объект
 
     setErrors(prev => ({ ...prev, [field]: error }));
     return error;
