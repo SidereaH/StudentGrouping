@@ -1,0 +1,25 @@
+.App {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.App h1 {
+  color: #2c1810;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.App p {
+  font-size: 1.1rem;
+  color: #4a4a4a;
+}
+
+.link {
+  color: #7b61ff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #6346ff;
+}
