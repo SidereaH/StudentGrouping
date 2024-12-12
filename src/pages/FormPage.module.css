@@ -1,0 +1,23 @@
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.inputError {
+  border-color: #ff4444 !important;
+}
+
+.errorMessage {
+  color: #ff4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Стили для состояния disabled у кнопки */
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #cccccc;
+} 

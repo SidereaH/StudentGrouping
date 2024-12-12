@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { validateEmail, validatePassword } from "../utils/validation";
 import styles from "./LoginPage.module.css";
 
 const LoginPage = () => {
@@ -6,35 +7,63 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
-  const [error, setError] = createSignal("");
+
+  const [errors, setErrors] = createSignal({
+    email: null,
+    password: null,
+  });
+
+  const [touched, setTouched] = createSignal({
+    email: false,
+    password: false,
+  });
+
+  const validateField = (field, value) => {
+    let error = null;
+    
+    switch (field) {
+      case 'email':
+        error = validateEmail(value);
+        break;
+      case 'password':
+        error = validatePassword(value);
+        break;
+    }
+
+    setErrors(prev => ({ ...prev, [field]: error }));
+    return error;
+  };
+
+  const handleInput = (field, value) => {
+    setCredentials(prev => ({ ...prev, [field]: value }));
+    if (touched()[field]) {
+      validateField(field, value);
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validateField(field, credentials()[field]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrors({
+      email: null,
+      password: null,
+    });
     
+    const emailError = validateField('email', credentials().email);
+    const passwordError = validateField('password', credentials().password);
+
+    if (emailError || passwordError) {
+      return;
+    }
+
     try {
-      // Здесь будет логика авторизации
       console.log("Login attempt:", credentials());
-      
-      // Пример структуры запроса для будущего API
-      // const response = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(credentials()),
-      // });
-      
-      // if (response.ok) {
-      //   const data = await response.json();
-      //   localStorage.setItem('token', data.token);
-      //   // Редирект на главную страницу
-      //   window.location.href = '/';
-      // } else {
-      //   setError('Invalid credentials');
-      // }
     } catch (err) {
-      setError("An error occurred during login");
+      setErrors(prev => ({ ...prev, submit: "An error occurred during login" }));
     }
   };
 
@@ -43,18 +72,25 @@ const LoginPage = () => {
       <div class={styles.loginBox}>
         <h1>Login</h1>
         <form onSubmit={handleSubmit}>
-          {error() && <div class={styles.error}>{error()}</div>}
+          {errors().submit && (
+            <div class={styles.error}>{errors().submit}</div>
+          )}
           <div class={styles.inputGroup}>
             <label for="email">Email</label>
             <input
               id="email"
               type="email"
               value={credentials().email}
-              onInput={(e) =>
-                setCredentials({ ...credentials(), email: e.target.value })
-              }
-              required
+              onInput={(e) => handleInput('email', e.target.value)}
+              onBlur={() => handleBlur('email')}
+              classList={{
+                [styles.inputError]: errors().email && touched().email
+              }}
+              placeholder="example@domain.com"
             />
+            {errors().email && touched().email && (
+              <div class={styles.errorMessage}>{errors().email}</div>
+            )}
           </div>
           <div class={styles.inputGroup}>
             <label for="password">Password</label>
@@ -62,13 +98,23 @@ const LoginPage = () => {
               id="password"
               type="password"
               value={credentials().password}
-              onInput={(e) =>
-                setCredentials({ ...credentials(), password: e.target.value })
-              }
-              required
+              onInput={(e) => handleInput('password', e.target.value)}
+              onBlur={() => handleBlur('password')}
+              classList={{
+                [styles.inputError]: errors().password && touched().password
+              }}
+              placeholder="Enter your password"
             />
+            {errors().password && touched().password && (
+              <div class={styles.errorMessage}>{errors().password}</div>
+            )}
           </div>
-          <button type="submit">Login</button>
+          <button 
+            type="submit"
+            disabled={errors().email || errors().password}
+          >
+            Login
+          </button>
         </form>
       </div>
     </div>
