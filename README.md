@@ -35,8 +35,8 @@ You can deploy the `dist` folder to any static host provider (netlify, surge, no
 
 ## Usage
 
- [http://localhost:3000](localhost:3000) - main page
- [http://localhost:3000/form](localhost:3000/form) - student form page
- [http://localhost:3000/login](localhost:3000/login) - login  page
+ [localhost:3000](http://localhost:3000) - main page<br>
+ [localhost:3000/form](http://localhost:3000/form) - student form page<br>
+ [localhost:3000/login](http://localhost:3000/login) - login  page<br>
 
 
