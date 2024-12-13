@@ -1,6 +1,5 @@
 import { createSignal } from "solid-js";
-// createSignal - это хук SolidJS для создания реактивного состояния
-// он возвращает массив [getter, setter], похоже на useState в React
+import { useNavigate } from "@solidjs/router";
 
 import { validateEmail, validatePassword } from "../utils/validation";
 import styles from "./LoginPage.module.css";
@@ -25,6 +24,9 @@ const LoginPage = () => {
     email: false,
     password: false,
   });
+
+  const navigate = useNavigate();
+
 // Функция валидации отдельного поля
   const validateField = (field, value) => {
     let error = null;
@@ -74,6 +76,11 @@ const LoginPage = () => {
 
     try {
       console.log("Login attempt:", credentials());
+      const isAuthenticated = true; // Условно считаем, что авторизация успешна
+
+      if (isAuthenticated) {
+        navigate("/profile");
+      }
     } catch (err) {
       setErrors(prev => ({ ...prev, submit: "An error occurred during login" }));
     }
@@ -81,6 +88,7 @@ const LoginPage = () => {
 
   return (
     <div class={styles.loginContainer}>
+      
       <div class={styles.loginBox}>
         <h1>Login</h1>
         <form onSubmit={handleSubmit}>
