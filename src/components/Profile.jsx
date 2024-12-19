@@ -1,16 +1,15 @@
 import { createSignal } from "solid-js";
 import styles from "./Profile.module.css";
 import ConfirmationModal from "./ConfirmationModal";
+import ErrorModal from "./ErrorModal";
+import { useUser } from "../contexts/UserContext"; // Import user context
 
 const Profile = () => {
-  const [user, setUser] = createSignal({
-    name: "Иван Иванов",
-    email: "ivan.ivanov@example.com",
-    group: "ИСП9-Kh23",
-    firstPriority: "Frontend",
-    secondPriority: "Backend",
-  });
-  
+  const { user, setUser } = useUser(); // Access user information and setUser
+
+  if (!user()) {
+    return <p>Loading user information...</p>;
+  }
 
   const specialties = ["Frontend", "Backend", "Java", ".NET", "Data Engineer"];
   const [firstPriority, setFirstPriority] = createSignal(user().firstPriority);
@@ -19,7 +18,8 @@ const Profile = () => {
   const [tempSecondPriority, setTempSecondPriority] = createSignal(user().secondPriority);
   const [isChanged, setIsChanged] = createSignal(false);
   const [activeModal, setActiveModal] = createSignal(null);
-
+  const [activeError, setActiveError] = createSignal(null);
+  const [errorMessage, setErrorMessage] = createSignal(null);
 
   const handleFirstPriorityChange = (e) => {
     setTempFirstPriority(e.target.value);
@@ -32,14 +32,33 @@ const Profile = () => {
   };
 
   const handleSave = () => {
-    setActiveModal("confirmation");
+    if (
+      tempFirstPriority() === tempSecondPriority() || 
+      tempFirstPriority() === secondPriority() ||
+      tempSecondPriority() === firstPriority() ||
+      tempFirstPriority() === tempSecondPriority()
+    ) {
+      handleError("Ошибка! Поля не могут повторяться");
+    } else {
+      setActiveModal("confirmation");
+    }
   };
 
   const handleConfirm = () => {
+    // Сохраняем обновленные значения в контекст пользователя
+    setUser((prevUser) => ({
+      ...prevUser,
+      firstPriority: tempFirstPriority(),
+      secondPriority: tempSecondPriority()
+    }));
+
+    // Обновляем локальные сигналы для отображения новых значений
     setFirstPriority(tempFirstPriority());
     setSecondPriority(tempSecondPriority());
+
     setIsChanged(false);
     setActiveModal(null);
+    logUserFields();
   };
 
   const handleCancel = () => {
@@ -53,12 +72,41 @@ const Profile = () => {
     setActiveModal(null);
   };
 
+  const closeError = () => {
+    setActiveError(null);
+  };
+
+  const handleError = (message) => {
+    setActiveError("error");
+    setErrorMessage(message);
+  };
+
+  const logUserFields = () => {
+    const userData = user(); // Получаем текущее значение объекта user
+  
+    if (!userData) {
+      console.log("Пользователь не авторизован");
+      return;
+    }
+  
+    // Перебор всех полей объекта
+    Object.entries(userData).forEach(([key, value]) => {
+      console.log(`${key}: ${value}`);
+    });
+  };
+
   return (
     <div class={styles.profileContainer}>
       <h2>Профиль пользователя</h2>
-      <p><strong>Имя:</strong> {user().name}</p>
-      <p><strong>Email:</strong> {user().email}</p>
-      <p><strong>Группа:</strong> {user().group}</p>
+      {user() ? (
+        <>
+          <p><strong>Имя:</strong> {user().name}</p>
+          <p><strong>Email:</strong> {user().email}</p>
+          <p><strong>Группа:</strong> {user().group}</p>
+        </>
+      ) : (
+        <p>Пользователь не авторизован</p>
+      )}
       
       <div>
         <p><strong>Первый приоритет:</strong> {firstPriority()}</p>
@@ -92,8 +140,15 @@ const Profile = () => {
           onConfirm={handleConfirm}
         />
       )}
+      {activeError() === "error" && (
+        <ErrorModal
+          isOpen={true}
+          onClose={closeError}
+          errorMessage={errorMessage}
+        />
+      )}
     </div>
   );
 };
 
-export default Profile; 
+export default Profile;

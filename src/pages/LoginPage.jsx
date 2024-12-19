@@ -1,36 +1,82 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
+import { useUser } from "../contexts/UserContext"; // Импортируем контекст
 
 import { validateEmail, validatePassword } from "../utils/validation";
 import styles from "./LoginPage.module.css";
 
+// Функция для отправки запроса на авторизацию
+const loginUser = async (credentials) => {
+  const response = await fetch('http://localhost:8081/auth/signin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username: credentials.email,
+      password: credentials.password,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Invalid credentials');
+  }
+
+  return response.json(); // Возвращаем объект с токенами
+};
+
+// Функция для получения данных о пользователе с помощью accessToken
+const getUserInfo = async (accessToken) => {
+  const response = await fetch('http://localhost:8081/secured/user', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user info');
+  }
+
+  return response.json(); // Возвращаем информацию о пользователе
+};
+
+// Функция для обновления токена
+const refreshAccessToken = async (refreshToken) => {
+  const response = await fetch(`http://localhost:8081/auth/refresh?refreshToken=${refreshToken}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to refresh token');
+  }
+
+  return response.json(); // Возвращаем новый accessToken
+};
+
 const LoginPage = () => {
-      // Создаем реактивное состояние для данных формы
-  // credentials() - для получения значения
-  // setCredentials - для обновления значения
   const [credentials, setCredentials] = createSignal({
     email: "",
     password: "",
   });
-    // Состояние для хранения ошибок валидации
-
   const [errors, setErrors] = createSignal({
     email: null,
     password: null,
   });
- // Состояние для отслеживания "тронутых" полей
-  // Нужно, чтобы показывать ошибки только после взаимодействия с полем
   const [touched, setTouched] = createSignal({
     email: false,
     password: false,
   });
 
   const navigate = useNavigate();
+  const { setUser } = useUser(); // Получаем функцию для установки пользователя
 
-// Функция валидации отдельного поля
+  // Валидация отдельного поля
   const validateField = (field, value) => {
     let error = null;
-     // Используем разные валидаторы в зависимости от поля
 
     switch (field) {
       case 'email':
@@ -41,22 +87,19 @@ const LoginPage = () => {
         break;
     }
 
-    // Обновляем состояние ошибок
-    // В SolidJS для обновления объекта нужно создать новый объект
-
-    setErrors(prev => ({ ...prev, [field]: error }));
+    setErrors((prev) => ({ ...prev, [field]: error }));
     return error;
   };
 
   const handleInput = (field, value) => {
-    setCredentials(prev => ({ ...prev, [field]: value }));
+    setCredentials((prev) => ({ ...prev, [field]: value }));
     if (touched()[field]) {
       validateField(field, value);
     }
   };
 
   const handleBlur = (field) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
+    setTouched((prev) => ({ ...prev, [field]: true }));
     validateField(field, credentials()[field]);
   };
 
@@ -66,7 +109,7 @@ const LoginPage = () => {
       email: null,
       password: null,
     });
-    
+
     const emailError = validateField('email', credentials().email);
     const passwordError = validateField('password', credentials().password);
 
@@ -75,20 +118,50 @@ const LoginPage = () => {
     }
 
     try {
-      console.log("Login attempt:", credentials());
-      const isAuthenticated = true; // Условно считаем, что авторизация успешна
+      // Отправка запроса на авторизацию
+      const { accessToken, refreshToken } = await loginUser(credentials());
+      console.log('Login successful.');
 
-      if (isAuthenticated) {
-        navigate("/profile");
-      }
+      // Сохраняем токены в localStorage
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+
+      // Получаем информацию о пользователе
+      const userInfo = await getUserInfo(accessToken);
+      console.log('User info:', userInfo);
+
+      // Устанавливаем информацию о пользователе в контексте
+      setUser(userInfo);
+
+      // Перенаправляем на страницу профиля
+      navigate('/profile');
     } catch (err) {
-      setErrors(prev => ({ ...prev, submit: "An error occurred during login" }));
+      setErrors((prev) => ({ ...prev, submit: err.message }));
+    }
+  };
+
+  // Обработка обновления токена, если accessToken истек
+  const handleTokenExpiration = async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      console.log('No refresh token found');
+      return;
+    }
+
+    try {
+      // Попытка обновить accessToken с использованием refreshToken
+      const { accessToken, refreshToken: newRefreshToken } = await refreshAccessToken(refreshToken);
+      // Сохраняем обновленные токены в localStorage
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', newRefreshToken);
+      console.log('Token refreshed successfully');
+    } catch (err) {
+      console.error('Failed to refresh token:', err);
     }
   };
 
   return (
     <div class={styles.loginContainer}>
-      
       <div class={styles.loginBox}>
         <h1>Login</h1>
         <form onSubmit={handleSubmit}>
@@ -104,9 +177,9 @@ const LoginPage = () => {
               onInput={(e) => handleInput('email', e.target.value)}
               onBlur={() => handleBlur('email')}
               classList={{
-                [styles.inputError]: errors().email && touched().email
+                [styles.inputError]: errors().email && touched().email,
               }}
-              placeholder="example@domain.com"
+              placeholder="SecondFM@rostov-don.ithub.ru"
             />
             {errors().email && touched().email && (
               <div class={styles.errorMessage}>{errors().email}</div>
@@ -121,7 +194,7 @@ const LoginPage = () => {
               onInput={(e) => handleInput('password', e.target.value)}
               onBlur={() => handleBlur('password')}
               classList={{
-                [styles.inputError]: errors().password && touched().password
+                [styles.inputError]: errors().password && touched().password,
               }}
               placeholder="Enter your password"
             />
@@ -129,10 +202,7 @@ const LoginPage = () => {
               <div class={styles.errorMessage}>{errors().password}</div>
             )}
           </div>
-          <button 
-            type="submit"
-            disabled={errors().email || errors().password}
-          >
+          <button type="submit" disabled={errors().email || errors().password}>
             Login
           </button>
         </form>
@@ -141,4 +211,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage; 
+export default LoginPage;

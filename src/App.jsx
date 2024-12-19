@@ -3,6 +3,7 @@ import styles from './App.module.css';
 import { createSignal } from "solid-js";
 import Profile from "./components/Profile";
 import UserModal from "./components/UserModal";
+import { UserProvider } from "./contexts/UserContext";
 
 const App = () => {
   // Условное состояние авторизации
@@ -17,14 +18,16 @@ const App = () => {
   };
 
   return (
-    <div class={styles.App}>
-      <h1>Welcome to the Student Grouping App</h1>
+    
+      <div class={styles.App}>
+        <h1>Welcome to the Student Grouping App</h1>
 
-      <p>
-        <A href="/login">Login</A> or navigate to <A href="/form">Form Page</A> to enter student data.
-        {isAuthenticated() && <A href="/profile">Profile</A>}
-      </p>
-    </div>
+        <p>
+          <A href="/login">Login</A> or navigate to <A href="/form">Form Page</A> to enter student data.
+          {isAuthenticated() && <A href="/profile">Profile</A>}
+        </p>
+      </div>
+    
   );
 };
 

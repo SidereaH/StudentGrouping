@@ -3,9 +3,11 @@ import styles from "./ProfilePage.module.css";
 
 const ProfilePage = () => {
   return (
+
     <div class={styles.profilePageContainer}>
       <Profile />
     </div>
+
   );
 };
 
