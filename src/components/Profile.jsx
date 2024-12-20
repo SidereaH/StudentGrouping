@@ -12,7 +12,6 @@ const Profile = () => {
 		console.log('User not loaded yet')
 		return <p>Loading user information...</p>
 	}
-	console.log('User from context:', user()) // Проверьте, что здесь возвращается корректное значение
 
 	const specialties = ['Frontend', 'Backend', 'Java', '.NET', 'Data Engineer']
 	const [firstPriority, setFirstPriority] = createSignal(user().firstPriority)
@@ -62,6 +61,9 @@ const Profile = () => {
 		) {
 			handleError('Ошибка! Поля не могут повторяться')
 		} else {
+			setTempFirstPriority(tempFirstPriority())
+			setTempSecondPriority(tempSecondPriority())
+			console.log(tempFirstPriority(), tempSecondPriority())
 			setConfirmationModalOpen(true)
 			// setFirstPriority(tempFirstPriority())
 			// setSecondPriority(tempSecondPriority())
@@ -92,6 +94,7 @@ const Profile = () => {
 
 	const closeError = () => {
 		setActiveError(null)
+		setErrorMessage(null)
 	}
 
 	const handleError = message => {
@@ -152,6 +155,8 @@ const Profile = () => {
 					isOpen={true}
 					onClose={() => setConfirmationModalOpen(false)}
 					onConfirm={handleConfirmSave}
+					firstSpec={tempFirstPriority()}
+					secondSpec={tempSecondPriority()}
 				/>
 			)}
 		</div>

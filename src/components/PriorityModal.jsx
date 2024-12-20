@@ -1,3 +1,5 @@
+import styles from './Profile.module.css'
+
 export const PriorityModal = ({
 	isOpen,
 	onClose,
