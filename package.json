@@ -1,6 +1,6 @@
 {
 	"name": "stud_distributor",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "",
 	"type": "module",
 	"scripts": {
@@ -15,7 +15,9 @@
 		"vite-plugin-solid": "^2.11.0"
 	},
 	"dependencies": {
+		"@rollup/rollup-win32-x64-msvc": "^4.28.1",
 		"@solidjs/router": "^0.15.2",
+		"postcss": "^8.4.49",
 		"solid-js": "^1.9.3"
 	}
 }
