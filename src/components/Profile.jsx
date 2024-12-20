@@ -3,75 +3,16 @@ import styles from './Profile.module.css'
 import ConfirmationModal from './ConfirmationModal'
 import ErrorModal from './ErrorModal'
 import { useUser } from '../contexts/UserContext'
-import {getUserInfo} from '../utils/user'
-const PriorityModal = ({
-	isOpen,
-	onClose,
-	tempFirstPriority,
-	setTempFirstPriority,
-	tempSecondPriority,
-	setTempSecondPriority,
-	specialties,
-	onSave,
-	onCancel,
-}) => {
-	if (!isOpen) return null
-
-	return (
-		<div class={styles.modalBackdrop}>
-			<div class={styles.modalContent}>
-				<h3>Выбор группы</h3>
-				<div>
-					<p>
-						<strong>Приоритетная спициальность:</strong>
-					</p>
-					<select
-						onChange={e => setTempFirstPriority(e.target.value)}
-						value={tempFirstPriority()}
-					>
-						{specialties.map(specialty => (
-							<option value={specialty} key={specialty}>
-								{specialty}
-							</option>
-						))}
-					</select>
-				</div>
-
-				<div>
-					<p>
-						<strong>Вторичная специальность:</strong>
-					</p>
-					<select
-						onChange={e => setTempSecondPriority(e.target.value)}
-						value={tempSecondPriority()}
-					>
-						{specialties.map(specialty => (
-							<option value={specialty} key={specialty}>
-								{specialty}
-							</option>
-						))}
-					</select>
-				</div>
-
-				<div class={styles.modalActions}>
-					<button onClick={onSave}>Сохранить</button>
-					<button onClick={onCancel}>Отменить</button>
-				</div>
-
-				<button class={styles.closeButton} onClick={onClose}>
-					✕
-				</button>
-			</div>
-		</div>
-	)
-}
+import { getUserInfo } from '../utils/user'
+import { PriorityModal } from './PriorityModal'
 
 const Profile = () => {
 	const { user, setUser } = useUser()
-
 	if (!user()) {
+		console.log('User not loaded yet')
 		return <p>Loading user information...</p>
 	}
+	console.log('User from context:', user()) // Проверьте, что здесь возвращается корректное значение
 
 	const specialties = ['Frontend', 'Backend', 'Java', '.NET', 'Data Engineer']
 	const [firstPriority, setFirstPriority] = createSignal(user().firstPriority)
@@ -113,7 +54,6 @@ const Profile = () => {
 		setUser(userInfo.user)
 	}
 
-	
 	const handleSavePriorities = () => {
 		if (
 			tempFirstPriority() === tempSecondPriority() ||
