@@ -85,8 +85,10 @@ export const distributeUser = async (
 				} catch (err) {
 					setError(err.message)
 				}
-			} else if (!response.ok) {
-				throw new Error('Failed to fetch user info')
+			} else if (response.status === 500) {
+				throw new Error(
+					'У Вас есть задолженность. Вы будете распределены автоматически в самом конце.'
+				)
 			}
 		}
 

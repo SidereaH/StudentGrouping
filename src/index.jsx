@@ -36,7 +36,7 @@ const AppRouter = () => {
 				<Route
 					path='/form'
 					component={() => (
-						<RoleRoute roles={['ROLE_ADMIN']}>
+						<RoleRoute roles={['ROLE_USER']}>
 							<FormPage />
 						</RoleRoute>
 					)}
