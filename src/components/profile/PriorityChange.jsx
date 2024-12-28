@@ -111,11 +111,7 @@ const PriorityChange = () => {
 
 				<div>
 					<button onClick={handleSavePriorities}>Сохранить</button>
-					<button
-					// onClick={/*сбросить значения до firstPriority и secondPriority*/ }
-					>
-						Отменить
-					</button>
+					{/* <button>Отменить</button> */}
 				</div>
 			</div>
 
