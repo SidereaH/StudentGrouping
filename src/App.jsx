@@ -1,8 +1,8 @@
 import { A } from '@solidjs/router'
 import styles from './App.module.css'
 import { createSignal } from 'solid-js'
-import Profile from './components/Profile'
-import UserModal from './components/UserModal'
+import Profile from './components/profile/Profile'
+import UserModal from './components/modals/UserModal'
 import { UserProvider } from './contexts/UserContext'
 
 const App = () => {

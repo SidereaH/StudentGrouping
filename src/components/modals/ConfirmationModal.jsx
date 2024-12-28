@@ -1,8 +1,9 @@
 import { createSignal } from 'solid-js'
 import styles from './ConfirmationModal.module.css'
 import ErrorModal from './ErrorModal'
-import { distributeUser } from '../utils/user'
-import { useUser } from '../contexts/UserContext'
+import { distributeUser } from '../../utils/user'
+import { useUser } from '../../contexts/UserContext'
+import MessageModal from './MessageModal'
 
 const ConfirmationModal = props => {
 	const { user, setUser } = useUser()
@@ -12,12 +13,12 @@ const ConfirmationModal = props => {
 
 	const [isLoading, setIsLoading] = createSignal(false) // Состояние загрузки
 
-	const [activeError, setActiveError] = createSignal(null)
-	const [errorMessage, setErrorMessage] = createSignal(null)
+	const [activeMessage, setActiveMessage] = createSignal(null)
+	const [message, setMessage] = createSignal(null)
 
 	const handleDistributeUser = async () => {
 		setIsLoading(true)
-		setErrorMessage('') // Сбрасываем ошибку перед новым запросом
+		setMessage('') // Сбрасываем ошибку перед новым запросом
 		try {
 			console.log('Начало handleDistributeUser') // Отладка
 			let accessToken = localStorage.getItem('accessToken')
@@ -32,6 +33,10 @@ const ConfirmationModal = props => {
 				secondSpec
 			)
 			setUser(newuser)
+			handleSuccess(
+				'Вы были успешно распределены в группу по специальности ' +
+					newuser.speciality_name
+			)
 			console.log('Пользователь обновлён:', newuser)
 		} catch (error) {
 			console.error('Ошибка при распределении пользователя:', error)
@@ -42,14 +47,18 @@ const ConfirmationModal = props => {
 		}
 	}
 
-	const closeError = () => {
-		setActiveError(null)
-		setErrorMessage(null)
+	const closeMessage = () => {
+		setActiveMessage(null)
+		setMessage(null)
 	}
 
 	const handleError = message => {
-		setActiveError('error')
-		setErrorMessage(message)
+		setActiveMessage('error')
+		setMessage(message)
+	}
+	const handleSuccess = message => {
+		setActiveMessage('message')
+		setMessage(message)
 	}
 	return (
 		<>
@@ -72,11 +81,21 @@ const ConfirmationModal = props => {
 				</div>
 			</div>
 
-			{activeError() === 'error' && (
-				<ErrorModal
+			{activeMessage() === 'error' && (
+				<MessageModal
 					isOpen={true}
-					onClose={closeError}
-					errorMessage={errorMessage}
+					onClose={closeMessage}
+					title={'Ошибка'}
+					message={message}
+					onConfirm={onConfirm}
+				/>
+			)}
+			{activeMessage() === 'message' && (
+				<MessageModal
+					isOpen={true}
+					onClose={closeMessage}
+					title={'Успешно'}
+					message={message}
 					onConfirm={onConfirm}
 				/>
 			)}

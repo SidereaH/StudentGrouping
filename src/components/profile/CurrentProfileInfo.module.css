@@ -1,0 +1,24 @@
+.profileName {
+	font-size: 18px;
+	font-weight: bold;
+	padding: 6px 10px;
+	background-color: #fff;
+	/* max-width: 250px;
+	width: 100%; */
+	box-shadow: 0 4px 20px rgba(123, 97, 255, 0.08);
+	border-radius: 8px;
+	margin-bottom: 8px;
+	float: right;
+	display: block;
+}
+.profileName p {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+.profileName a {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}

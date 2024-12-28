@@ -1,0 +1,11 @@
+.profileButtons button {
+	font-weight: bold;
+	width: 200px;
+	display: block;
+	margin-bottom: 5px;
+}
+.profile {
+	display: flex;
+	align-items: top;
+	width: 100%;
+}

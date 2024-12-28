@@ -1,7 +1,7 @@
 import styles from './ConfirmationModal.module.css'
 
 const ErrorModal = props => {
-	const { isOpen, onClose, errorMessage, onConfirm } = props
+	const { isOpen, onClose, errorMessage } = props
 
 	console.log('ErrorModal - isOpen:', isOpen, 'errorMessage:', errorMessage)
 
@@ -15,7 +15,7 @@ const ErrorModal = props => {
 				</button>
 				<h2>Ошибка!</h2>
 				<p>{errorMessage}</p>
-				<button onClick={onConfirm}>Ок</button>
+				<button onClick={onClose}>Ок</button>
 			</div>
 		</div>
 	)

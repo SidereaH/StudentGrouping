@@ -1,6 +1,6 @@
-import styles from './Profile.module.css'
+import styles from '../profile/Profile.module.css'
 
-export const PriorityModal = ({
+const PriorityModal = ({
 	isOpen,
 	onClose,
 	tempFirstPriority,
@@ -11,8 +11,6 @@ export const PriorityModal = ({
 	onSave,
 	onCancel,
 }) => {
-	if (!isOpen) return null
-
 	return (
 		<div class={styles.modalBackdrop}>
 			<div class={styles.modalContent}>
@@ -61,3 +59,5 @@ export const PriorityModal = ({
 		</div>
 	)
 }
+
+export default PriorityModal

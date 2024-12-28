@@ -1,10 +1,11 @@
 import { createSignal } from 'solid-js'
 import styles from './Profile.module.css'
-import ConfirmationModal from './ConfirmationModal'
-import ErrorModal from './ErrorModal'
-import { useUser } from '../contexts/UserContext'
-import { getUserInfo } from '../utils/user'
-import { PriorityModal } from './PriorityModal'
+import ConfirmationModal from '../modals/ConfirmationModal'
+import ErrorModal from '../modals/ErrorModal'
+import { useUser } from '../../contexts/UserContext'
+import { getUserInfo } from '../../utils/user'
+import PriorityModal from '../modals/PriorityModal'
+import MessageModal from '../modals/MessageModal'
 
 const Profile = () => {
 	const { user, setUser } = useUser()
@@ -12,7 +13,7 @@ const Profile = () => {
 		console.log('User not loaded yet')
 		return <p>Loading user information...</p>
 	}
-
+	//переделать на апи
 	const specialties = ['Frontend', 'Backend', 'Java', '.NET', 'Data Engineer']
 	const [firstPriority, setFirstPriority] = createSignal(user().firstPriority)
 	const [secondPriority, setSecondPriority] = createSignal(
@@ -30,11 +31,8 @@ const Profile = () => {
 
 	const [isConfirmationModalOpen, setConfirmationModalOpen] =
 		createSignal(false)
-	const [isChangesPending, setChangesPending] = createSignal(false)
 
 	const handleOpenPriorityModal = () => {
-		setTempFirstPriority(firstPriority())
-		setTempSecondPriority(secondPriority())
 		setActiveModal('priority')
 	}
 	const updateUser = async e => {
@@ -61,29 +59,10 @@ const Profile = () => {
 		) {
 			handleError('Ошибка! Поля не могут повторяться')
 		} else {
-			setTempFirstPriority(tempFirstPriority())
-			setTempSecondPriority(tempSecondPriority())
-			console.log(tempFirstPriority(), tempSecondPriority())
 			setConfirmationModalOpen(true)
-			// setFirstPriority(tempFirstPriority())
-			// setSecondPriority(tempSecondPriority())
-			// setUser(prevUser => ({
-			// 	...prevUser,
-			// 	firstPriority: tempFirstPriority(),
-			// 	secondPriority: tempSecondPriority(),
-			// }))
-			// setActiveModal(null)
 		}
 	}
 	const handleConfirmSave = () => {
-		// Apply changes if confirmed
-		setFirstPriority(tempFirstPriority())
-		setSecondPriority(tempSecondPriority())
-		setUser(prevUser => ({
-			...prevUser,
-			firstPriority: tempFirstPriority(),
-			secondPriority: tempSecondPriority(),
-		}))
 		setActiveModal(null)
 		setConfirmationModalOpen(false)
 	}
@@ -144,10 +123,11 @@ const Profile = () => {
 			)}
 
 			{activeError() === 'error' && (
-				<ErrorModal
+				<MessageModal
 					isOpen={true}
 					onClose={closeError}
-					errorMessage={errorMessage}
+					title={'Ошибка'}
+					message={errorMessage}
 				/>
 			)}
 			{isConfirmationModalOpen() && (

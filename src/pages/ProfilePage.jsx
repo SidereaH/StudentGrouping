@@ -1,14 +1,16 @@
-import Profile from "../components/Profile";
-import styles from "./ProfilePage.module.css";
-
+import Profile from '../components/profile/Profile'
+import styles from './ProfilePage.module.css'
+import ProfileName from '../components/profile/CurrentProfileInfo'
+import ProfileButtons from '../components/profile/ProfileButtons'
 const ProfilePage = () => {
-  return (
+	return (
+		<div class={styles.profilePageContainer}>
+			<ProfileName />
+			<div class={styles.mainInfo}>
+				<ProfileButtons />
+			</div>
+		</div>
+	)
+}
 
-    <div class={styles.profilePageContainer}>
-      <Profile />
-    </div>
-
-  );
-};
-
-export default ProfilePage; 
+export default ProfilePage

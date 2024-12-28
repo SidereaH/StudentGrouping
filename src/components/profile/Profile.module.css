@@ -4,12 +4,16 @@
 	border-radius: 8px;
 	box-shadow: 0 4px 20px rgba(123, 97, 255, 0.08);
 	margin-bottom: 20px;
+	max-width: 650px;
+	width: 100%;
+	margin-left: 10px;
 }
 
 .profileContainer h2,
 .profileContainer h3 {
 	color: #2c1810;
 	margin-bottom: 10px;
+	margin-top: 0px;
 }
 
 .profileContainer p {
@@ -28,18 +32,6 @@ select {
 	border-radius: 8px;
 	box-sizing: border-box;
 	transition: border-color 0.3s ease;
-}
-
-button {
-	display: inline-block;
-	padding: 12px 24px;
-	color: white;
-	background-color: #7b61ff;
-	border: none;
-	border-radius: 8px;
-	cursor: pointer;
-	font-weight: 500;
-	transition: background-color 0.3s ease;
 }
 
 button:hover {
