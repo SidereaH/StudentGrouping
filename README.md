@@ -38,5 +38,5 @@ You can deploy the `dist` folder to any static host provider (netlify, surge, no
  [localhost:3000](http://localhost:3000) - main page<br>
  [localhost:3000/form](http://localhost:3000/form) - student form page<br>
  [localhost:3000/login](http://localhost:3000/login) - login  page<br>
-
+Backend - https://github.com/SidereaH/StudBalancer
 
